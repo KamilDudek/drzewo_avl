@@ -41,7 +41,7 @@ void DFSRelease(AVL_Node * v)
 	{
 		DFSRelease(v->left);   // usuwamy lewe poddrzewo
 		DFSRelease(v->right);  // usuwamy prawe poddrzewo
-		delete v;              // usuwamy sam wêze³
+		delete v;              // usuwamy sam w?ze?
 	}
 }
 
@@ -56,7 +56,7 @@ int makeEmpty(AVL_Node * temp)
 	return 0;
 }
 
-void RR(AVL_Node * root, AVL_Node * A)
+void RR(AVL_Node *&root, AVL_Node * A)
 {
 	AVL_Node * B, *p; //p - przodek
 	B = A->right;
@@ -112,7 +112,7 @@ void LL(AVL_Node *&root, AVL_Node * A)
 		A->bf = 1; B->bf = -1;
 	}
 }
-void height(AVL_Node * &root, int *h, int level)
+void height(AVL_Node *&root, int *h, int level)
 {
 	if (root)
 	{
@@ -148,7 +148,7 @@ void Bf(AVL_Node *temp)
 	x->bf = iL - iR; //obliczanie bf
 }
 
-void LR(AVL_Node * & root, AVL_Node * A)
+void LR(AVL_Node *&root, AVL_Node * A)
 {
 	AVL_Node * B = A->left, *C = B->right, *p = A->parent;
 
@@ -175,196 +175,233 @@ void LR(AVL_Node * & root, AVL_Node * A)
 	C->bf = 0;
 }
 
-	void RL(AVL_Node * & root, AVL_Node * A)
+void RL(AVL_Node *& root, AVL_Node * A)
+{
+	AVL_Node * B = A->right, *C = B->left, *p = A->parent;
+
+	B->left = C->right;
+	if (B->left) B->left->parent = B;
+
+	A->right = C->left;
+	if (A->right) A->right->parent = A;
+
+	C->left = A;
+	C->right = B;
+	A->parent = B->parent = C;
+	C->parent = p;
+
+	if (p)
 	{
-		AVL_Node * B = A->right, *C = B->left, *p = A->parent;
+		if (p->left == A) p->left = C; else p->right = C;
+	}
+	else root = C;
 
-		B->left = C->right;
-		if (B->left) B->left->parent = B;
+	if (C->bf == -1) A->bf = 1; else A->bf = 0;
+	if (C->bf == 1) B->bf = -1; else B->bf = 0;
 
-		A->right = C->left;
-		if (A->right) A->right->parent = A;
-
-		C->left = A;
-		C->right = B;
-		A->parent = B->parent = C;
-		C->parent= p;
-
-		if (p)
-		{
-			if (p->left == A) p->left = C; else p->right = C;
-		}
-		else root = C;
-
-		if (C->bf == -1) A->bf = 1; else A->bf = 0;
-		if (C->bf == 1) B->bf = -1; else B->bf = 0;
-
-		C->bf = 0;
+	C->bf = 0;
 }
 
 
 
 
 //---------------------------------
-	void insertAVL(AVL_Node * & root, int k)
-	{
-		AVL_Node * w, *p, *r;
-		bool t;
+void insertAVL(AVL_Node * & root, int k)
+{
+	AVL_Node * w, *p, *r;
+	bool t;
 
-		w = new AVL_Node;        // tworzymy dynamicznie nowy wêze³
-		w->left = w->right = w->parent = NULL;
-		w->key = k;
-		w->bf = 0;
+	w = new AVL_Node;        // tworzymy dynamicznie nowy w?ze?
+	w->left = w->right = w->parent = NULL;
+	w->key = k;
+	w->bf = 0;
 
-		//----------------------------------------
-		// FAZA 1 - wstawienie wêz³a do drzewa AVL
-		//----------------------------------------
+	//----------------------------------------
+	// FAZA 1 - wstawienie w?z?a do drzewa AVL
+	//----------------------------------------
 
-		p = root;              // rozpoczynamy od korzenia
+	p = root;              // rozpoczynamy od korzenia
 
-		if (!p) root = w;       // jeœli drzewo jest puste, to wêze³ w umieszczamy w korzeniu
-		else
-		{                      // inaczej szukamy miejsce dla w
-			while (true)
-				if (k < p->key)     // porównujemy klucze
+	if (!p) root = w;       // je?li drzewo jest puste, to w?ze? w umieszczamy w korzeniu
+	else
+	{                      // inaczej szukamy miejsce dla w
+		while (true)
+			if (k < p->key)     // porównujemy klucze
+			{
+				if (!p->left)     // je?li p nie posiada lewego syna, to
 				{
-					if (!p->left)     // jeœli p nie posiada lewego syna, to
-					{
-						p->left = w;   // lewym synem p staje siê wêze³ w
-						break;         // wychodzimy z pêtli
-					}
-					p = p->left;     // inaczej przechodzimy do lewego syna
+					p->left = w;   // lewym synem p staje si? w?ze? w
+					break;         // wychodzimy z p?tli
 				}
-				else
-				{
-					if (!p->right)    // jeœli p nie posiada prawego syna, to
-					{
-						p->right = w;  // prawym synem staje siê wêze³ w
-						break;         // wychodzimy z pêtli
-					}
-					p = p->right;    // inaczej przechodzimy do prawego syna
-				}
-
-			w->parent = p;           // ojcem w jest p
-
-								 //---------------------------------
-								 // FAZA 2 - równowa¿enie drzewa AVL
-								 //---------------------------------
-
-			if (p->bf) p->bf = 0; // UWAGA NR 1
+				p = p->left;     // inaczej przechodzimy do lewego syna
+			}
 			else
 			{
-				if (p->left == w)   // UWAGA NR 2
-					p->bf = 1;
-				else
-					p->bf = -1;
-
-				r = p->parent;        // bêdziemy szli w górê drzewa w kierunku korzenia
-								  // r i p wskazuj¹ ojca i syna na tej œcie¿ce
-				t = false;
-				while (r)
+				if (!p->right)    // je?li p nie posiada prawego syna, to
 				{
-					if (r->bf)
-					{
-						t = true;     // ustalamy wynik pêtli
-						break;        // przerywamy pêtlê
-					};
-					// inaczej modyfikujemy r.bf
-					if (r->left == p) r->bf = 1;
-					else             r->bf = -1;
-
-					p = r;          // przechodzimy w górê na wy¿szy poziom
-					r = r->parent;
+					p->right = w;  // prawym synem staje si? w?ze? w
+					break;         // wychodzimy z p?tli
 				}
+				p = p->right;    // inaczej przechodzimy do prawego syna
+			}
 
-				if (t)             // jeœli r.bf = +/- 1, to musimy
-				{                 // równowa¿yæ drzewo
-					if (r->bf == 1)
-					{
-						if (r->right == p) r->bf = 0;  // ga³êzie siê równowa¿¹
-						else if (p->bf == -1) LR(root, r);
-						else                 LL(root, r);
-					}
-					else
-					{              // r.bf = -1
-						if (r->left == p) r->bf = 0;  // ga³êzie siê równowa¿¹
-						else if (p->bf == 1) RL(root, r);
-						else                RR(root, r);
-					}
+		w->parent = p;           // ojcem w jest p
+
+								 //---------------------------------
+								 // FAZA 2 - równowa?enie drzewa AVL
+								 //---------------------------------
+
+		if (p->bf) p->bf = 0; // UWAGA NR 1
+		else
+		{
+			if (p->left == w)   // UWAGA NR 2
+				p->bf = 1;
+			else
+				p->bf = -1;
+
+			r = p->parent;        // b?dziemy szli w gór? drzewa w kierunku korzenia
+								  // r i p wskazuj? ojca i syna na tej ?cie?ce
+			t = false;
+			while (r)
+			{
+				if (r->bf)
+				{
+					t = true;     // ustalamy wynik p?tli
+					break;        // przerywamy p?tl?
+				};
+				// inaczej modyfikujemy r.bf
+				if (r->left == p) r->bf = 1;
+				else             r->bf = -1;
+
+				p = r;          // przechodzimy w gór? na wy?szy poziom
+				r = r->parent;
+			}
+
+			if (t)             // je?li r.bf = +/- 1, to musimy
+			{                 // równowa?y? drzewo
+				if (r->bf == 1)
+				{
+					if (r->right == p) r->bf = 0;  // ga??zie si? równowa??
+					else if (p->bf == -1) LR(root, r);
+					else                 LL(root, r);
+				}
+				else
+				{              // r.bf = -1
+					if (r->left == p) r->bf = 0;  // ga??zie si? równowa??
+					else if (p->bf == 1) RL(root, r);
+					else                RR(root, r);
 				}
 			}
 		}
 	}
+}
+
+void inorder(AVL_Node *temp)
+{
+	if (temp == NULL)
+		return;
+	inorder(temp->left);
+	cout << temp->key << "  ";
+	inorder(temp->right);
+}
+
+void preorder(AVL_Node *temp)
+{
+	if (temp == NULL)
+		return;
+	cout << temp->key << "  ";
+	preorder(temp->left);
+	preorder(temp->right);
+}
+
+void postorder(AVL_Node *temp)
+{
+	if (temp == NULL)
+		return;
+	postorder(temp->left);
+	postorder(temp->right);
+	cout << temp->key << "  ";
+
+}
+
 int main()
 {
 
 
-	
-		int Tk[32];   // tablica kluczy wêz³ów
-		int i, x, i1, i2;
-		AVL_Node * root = NULL;
 
-		// ustawiamy ³añcuchy znakowe, poniewa¿ nie wszystkie edytory pozwalaj¹
-		// wstawiaæ znaki konsoli do tworzenia ramek.
-		// cr = +--
-		//      |
+	int Tk[32];   // tablica kluczy w?z?ów
+	int i, x, i1, i2;
+	AVL_Node * root = NULL;
 
-		// cl = |
-		//      +--
+	// ustawiamy ?a?cuchy znakowe, poniewa? nie wszystkie edytory pozwalaj?
+	// wstawia? znaki konsoli do tworzenia ramek.
+	// cr = +--
+	//      |
 
-		// cp = |
-		//      |
+	// cl = |
+	//      +--
 
-		cr = cl = cp = "  ";
-		cr[0] = 218; cr[1] = 196;
-		cl[0] = 192; cl[1] = 196;
-		cp[0] = 179;
+	// cp = |
+	//      |
 
-		srand(time(NULL));        // inicjujemy generator pseudolosowy
+	cr = cl = cp = "  ";
+	cr[0] = 218; cr[1] = 196;
+	cl[0] = 192; cl[1] = 196;
+	cp[0] = 179;
 
-		for (i = 0; i < 32; i++)   // Tablicê wype³niamy wartoœciami kluczy
-			Tk[i] = i + 1;
+	srand(time(NULL));        // inicjujemy generator pseudolosowy
 
-		for (i = 0; i < 300; i++)  // Mieszamy tablicê
-		{
-			i1 = rand() % 32;       // Losujemy 2 indeksy
-			i2 = rand() % 32;
+	for (i = 0; i < 32; i++)   // Tablic? wype?niamy warto?ciami kluczy
+		Tk[i] = i + 1;
 
-			x = Tk[i1];             // Wymieniamy Tk[i1] <--> Tk[i2]
-			Tk[i1] = Tk[i2];
-			Tk[i2] = x;
-		}
+	for (i = 0; i < 300; i++)  // Mieszamy tablic?
+	{
+		i1 = rand() % 32;       // Losujemy 2 indeksy
+		i2 = rand() % 32;
 
-		for (i = 0; i < 32; i++)   // Na podstawie tablicy tworzymy drzewo AVL
-		{
-			cout << Tk[i] << " ";
-			insertAVL(root, Tk[i]);
-		}
+		x = Tk[i1];             // Wymieniamy Tk[i1] <--> Tk[i2]
+		Tk[i1] = Tk[i2];
+		Tk[i2] = x;
+	}
 
-		cout << endl << endl;
+	for (i = 0; i < 32; i++)   // Na podstawie tablicy tworzymy drzewo AVL
+	{
+		cout << Tk[i] << " ";
+		insertAVL(root, Tk[i]);
+	}
 
-		printBT("", "", root);      // Wyœwietlamy zawartoœæ drzewa AVL
+	cout << endl << endl;
 
-		cout << endl << endl;
+	printBT("", "", root);      // Wy?wietlamy zawarto?? drzewa AVL
 
-		for (i = 0; i < 300; i++)  // Ponownie mieszamy tablicê
-		{
-			i1 = rand() % 32; i2 = rand() % 32;
-			x = Tk[i1]; Tk[i1] = Tk[i2]; Tk[i2] = x;
-		}
+	cout << endl << endl;
 
-		//for (i = 0; i < 15; i++)    // Usuwamy 15 wêz³ów
-		//{
-		//	cout << Tk[i] << " ";
-		//	removeAVL(root, findAVL(root, Tk[i]));
-		//}
+	for (i = 0; i < 300; i++)  // Ponownie mieszamy tablic?
+	{
+		i1 = rand() % 32; i2 = rand() % 32;
+		x = Tk[i1]; Tk[i1] = Tk[i2]; Tk[i2] = x;
+	}
 
-		cout << endl << endl;
+	//for (i = 0; i < 15; i++)    // Usuwamy 15 w?z?ów
+	//{
+	//	cout << Tk[i] << " ";
+	//	removeAVL(root, findAVL(root, Tk[i]));
+	//}
 
-		printBT("", "", root);      // Wyœwietlamy zawartoœæ drzewa AVL
+	cout << endl << endl;
 
-		DFSRelease(root);         // Usuwamy drzewo AVL z pamiêci
-		getchar();
-		return 0;
-		
+	printBT("", "", root);      // Wy?wietlamy zawarto?? drzewa AVL
+	cout << "Inorder: ";
+	inorder(root);
+	cout << endl;
+	cout << "Preorder: ";
+	preorder(root);
+	cout<<endl;
+	cout << "Postorder: ";
+	postorder(root);
+
+	DFSRelease(root);         // Usuwamy drzewo AVL z pami?ci
+	getchar();
+	return 0;
+
 }
