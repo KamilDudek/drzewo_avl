@@ -371,8 +371,61 @@ int main()
 	}
 
 	cout << endl << endl;
+	int choice;
+	while (1)
+	{
+		cout << "\n---------------------" << endl;
+		cout << "AVL Tree Implementation" << endl;
+		cout << "\n---------------------" << endl;
+		cout << "1.Insert Element into the tree" << endl;
+		cout << "2.Display Balanced AVL Tree" << endl;
+		cout << "3.InOrder traversal" << endl;
+		cout << "4.PreOrder traversal" << endl;
+		cout << "5.PostOrder traversal" << endl;
+		cout << "6.Exit" << endl;
+		cout << "Enter your Choice: ";
+		cin >> choice;
+		switch (choice)
+		{
+		case 1:
+			cout << "Enter value to be inserted: ";
+					break;
+		case 2:
+			if (root == NULL)
+			{
+				cout << "Tree is Empty" << endl;
+				continue;
+			}
+			printBT("", "", root);      // Wy?wietlamy zawarto?? drzewa AVL
+			break;
+		case 3:
+			cout << "Inorder Traversal:" << endl;
+			inorder(root);
+			cout << endl;
+			break;
+		case 4:
+			cout << "Preorder Traversal:" << endl;
+			preorder(root);
+			cout << endl;
+			break;
+		case 5:
+			cout << "Postorder Traversal:" << endl;
+			postorder(root);
+			cout << endl;
+			break;
+		case 6:
+			system("cls");
+			break;
+		case 7:
+			exit(1);
+			break;
+		default:
+			cout << "Wrong Choice" << endl;
+		}
+	}
+	
 
-	printBT("", "", root);      // Wy?wietlamy zawarto?? drzewa AVL
+
 
 	cout << endl << endl;
 
@@ -402,6 +455,6 @@ int main()
 
 	DFSRelease(root);         // Usuwamy drzewo AVL z pami?ci
 	getchar();
-	return 0;
 
+	return 0;
 }
