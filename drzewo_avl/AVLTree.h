@@ -1,13 +1,12 @@
 #pragma once
-#include "Node.h"
 
+#ifndef AVLTree_H
+#define AVLTree_H
+#include "Node.h"
 
 using namespace std;
 
-
-
-
-void printBT(string, string, AVL_Node *);
+void printBT(string, string, AVL_Node *, string cr, string cp, string cl);
 void DFSRelease(AVL_Node *);
 AVL_Node * removeAVL(AVL_Node *&, AVL_Node *);
 AVL_Node * findAVL(AVL_Node *, int);
@@ -22,3 +21,4 @@ void RR(AVL_Node *&, AVL_Node *);
 void height(AVL_Node *&);
 void height(AVL_Node *&, int *, int);
 void createTree(AVL_Node *&, int);
+#endif

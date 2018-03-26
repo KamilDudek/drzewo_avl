@@ -1,4 +1,6 @@
 #pragma once
+#ifndef Node_H
+#define Node_H
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -14,4 +16,4 @@ struct AVL_Node
 	int key;
 	int bf;
 };
-string cr, cl, cp;
+#endif
