@@ -1,20 +1,10 @@
-#include <iostream>
-#include <string>
-#include <cstdlib>
 #include <ctime>
+#include "AVLTree.h"
 
 using namespace std;
 
-struct AVL_Node
-{
-	AVL_Node * parent;
-	AVL_Node * left;
-	AVL_Node * right;
-	int key;
-	int bf;
-};
 
-string cr, cl, cp;
+
 
 void printBT(string sp, string sn, AVL_Node * v)
 {
@@ -112,6 +102,14 @@ void LL(AVL_Node *&root, AVL_Node * A)
 		A->bf = 1; B->bf = -1;
 	}
 }
+
+void height(AVL_Node *&root)
+{
+	int *h = new int(0);
+	height(root, h, 0);
+	cout << *h;
+
+}
 void height(AVL_Node *&root, int *h, int level)
 {
 	if (root)
@@ -138,17 +136,17 @@ void Bf(AVL_Node *temp)
 	int iL = 0;		//lewa galaz
 	int iR = 0;		// prawa galaz
 
-	AVL_Node *x = temp, *y = x->left, *z = x->right;
+	AVL_Node *A = temp, *y = A->left, *z = A->right;
 
 	if (y != NULL)
 		height(y, &iL, 1);
 	if (z != NULL)
 		height(z, &iR, 1);
 
-	x->bf = iL - iR; //obliczanie bf
+	A->bf = iL - iR; //obliczanie bf
 }
 
-void LR(AVL_Node *&root, AVL_Node * A)
+void LR(AVL_Node *&root, AVL_Node  *A)
 {
 	AVL_Node * B = A->left, *C = B->right, *p = A->parent;
 
@@ -305,32 +303,133 @@ void inorder(AVL_Node *temp)
 	inorder(temp->right);
 }
 
-void preorder(AVL_Node *temp)
+AVL_Node * preorder(AVL_Node *temp)
 {
 	if (temp == NULL)
-		return;
+		return nullptr;
 	cout << temp->key << "  ";
 	preorder(temp->left);
 	preorder(temp->right);
+	return temp;
 }
 
-void postorder(AVL_Node *temp)
+AVL_Node *postorder(AVL_Node *temp)
 {
 	if (temp == NULL)
-		return;
+		return nullptr;
 	postorder(temp->left);
 	postorder(temp->right);
 	cout << temp->key << "  ";
+	return temp;
 
+}
+
+AVL_Node * findAVL(AVL_Node * p, int k)
+{
+	while (p && p->key != k)
+		p = (k < p->key) ? p->left : p->right;
+
+	return p;
+}
+
+AVL_Node * removeAVL(AVL_Node * & root, AVL_Node * A)
+{
+	AVL_Node  *t, *y, *z;
+	bool nest;
+
+	if (A->left && A->right)
+	{
+		y = removeAVL(root, preorder(A));
+		nest = false;
+	}
+	else
+	{
+		if (A->left)
+		{
+			y = A->left; A->left = NULL;
+		}
+		else
+		{
+			y = A->right; A->right = NULL;
+		}
+		A->bf = 0;
+		nest = true;
+	}
+
+	if (y)
+	{
+		y->parent = A->parent;
+		y->left = A->left;  if (y->left)  y->left->parent = y;
+		y->right = A->right; if (y->right)  y->right->parent = y;
+		y->bf = A->bf;
+	}
+	if (A->parent)
+	{
+		if (A->parent->left == A) A->parent->left = y; else A->parent->right = y;
+	}
+	else root = y;
+
+	if (nest)
+	{
+		z = y;
+		y = A->parent;
+		while (y)
+		{
+			if (!y->bf)
+			{              // Przypadek nr 1
+				if (y->left == z)  y->bf = -1; else y->bf = 1;
+				break;
+			}
+			else
+			{
+				if (((y->bf == 1) && (y->left == z)) || ((y->bf == -1) && (y->right == z)))
+				{           // Przypadek nr 2
+					y->bf = 0;
+					z = y; y = y->parent;
+				}
+				else
+				{
+					if (y->left == z)  t = y->right; else t = y->left;
+					if (!t->bf)
+					{         // Przypadek 3A
+						if (y->bf == 1) LL(root, y); else RR(root, y);
+						break;
+					}
+					else if (y->bf == t->bf)
+					{         // Przypadek 3B
+						if (y->bf == 1) LL(root, y); else RR(root, y);
+						z = t; y = t->parent;
+					}
+					else
+					{         // Przypadek 3C
+						if (y->bf == 1) LR(root, y); else RL(root, y);
+						z = y->parent; y = z->parent;
+					}
+				}
+			}
+		}
+	}
+	return A;
+}
+
+void createTree(AVL_Node * &root, int capacity)
+{
+	int var = 0;
+	for (int index = 0; index < capacity; index++)
+	{
+		var = rand() % 256;
+		cout << " | " << var << " | " << endl;
+		insertAVL(root, var);
+	}
 }
 
 int main()
 {
+	
+	srand(time(NULL));
 
 
-
-	int Tk[32];   // tablica kluczy w?z?ów
-	int i, x, i1, i2;
+	int b;
 	AVL_Node * root = NULL;
 
 	// ustawiamy ?a?cuchy znakowe, poniewa? nie wszystkie edytory pozwalaj?
@@ -349,46 +448,31 @@ int main()
 	cl[0] = 192; cl[1] = 196;
 	cp[0] = 179;
 
-	srand(time(NULL));        // inicjujemy generator pseudolosowy
-
-	for (i = 0; i < 32; i++)   // Tablic? wype?niamy warto?ciami kluczy
-		Tk[i] = i + 1;
-
-	for (i = 0; i < 300; i++)  // Mieszamy tablic?
-	{
-		i1 = rand() % 32;       // Losujemy 2 indeksy
-		i2 = rand() % 32;
-
-		x = Tk[i1];             // Wymieniamy Tk[i1] <--> Tk[i2]
-		Tk[i1] = Tk[i2];
-		Tk[i2] = x;
-	}
-
-	for (i = 0; i < 32; i++)   // Na podstawie tablicy tworzymy drzewo AVL
-	{
-		cout << Tk[i] << " ";
-		insertAVL(root, Tk[i]);
-	}
 
 	cout << endl << endl;
 	int choice;
 	while (1)
 	{
 		cout << "\n---------------------" << endl;
-		cout << "AVL Tree Implementation" << endl;
+		cout << "Drzewo AVL";
 		cout << "\n---------------------" << endl;
 		cout << "1.Insert Element into the tree" << endl;
-		cout << "2.Display Balanced AVL Tree" << endl;
-		cout << "3.InOrder traversal" << endl;
-		cout << "4.PreOrder traversal" << endl;
-		cout << "5.PostOrder traversal" << endl;
-		cout << "6.Exit" << endl;
+		cout << "2.Wyswietlanie" << endl;
+		cout << "3.Metoda InOrder" << endl;
+		cout << "4.Metoda PreOrder" << endl;
+		cout << "5.Metoda PostOrder" << endl;
+		cout << "6.Czyszczenie ekranu" << endl;
+		cout << "7.Exit" << endl;
 		cout << "Enter your Choice: ";
 		cin >> choice;
 		switch (choice)
 		{
 		case 1:
 			cout << "Enter value to be inserted: ";
+			cin >> b;
+		
+			
+			createTree(root,b);
 					break;
 		case 2:
 			if (root == NULL)
@@ -399,17 +483,17 @@ int main()
 			printBT("", "", root);      // Wy?wietlamy zawarto?? drzewa AVL
 			break;
 		case 3:
-			cout << "Inorder Traversal:" << endl;
+			cout << "Inorder:" << endl;
 			inorder(root);
 			cout << endl;
 			break;
 		case 4:
-			cout << "Preorder Traversal:" << endl;
+			cout << "Preorder:" << endl;
 			preorder(root);
 			cout << endl;
 			break;
 		case 5:
-			cout << "Postorder Traversal:" << endl;
+			cout << "Postorder:" << endl;
 			postorder(root);
 			cout << endl;
 			break;
@@ -417,43 +501,20 @@ int main()
 			system("cls");
 			break;
 		case 7:
-			exit(1);
+			//exit(1);
+			height(root);
+			
+			break;
+		case 8:
+			DFSRelease(root);
+			root = NULL;
 			break;
 		default:
-			cout << "Wrong Choice" << endl;
+			cout << "Bledna komenda!!" << endl;
 		}
 	}
 	
 
-
-
-	cout << endl << endl;
-
-	for (i = 0; i < 300; i++)  // Ponownie mieszamy tablic?
-	{
-		i1 = rand() % 32; i2 = rand() % 32;
-		x = Tk[i1]; Tk[i1] = Tk[i2]; Tk[i2] = x;
-	}
-
-	//for (i = 0; i < 15; i++)    // Usuwamy 15 w?z?ów
-	//{
-	//	cout << Tk[i] << " ";
-	//	removeAVL(root, findAVL(root, Tk[i]));
-	//}
-
-	cout << endl << endl;
-
-	printBT("", "", root);      // Wy?wietlamy zawarto?? drzewa AVL
-	cout << "Inorder: ";
-	inorder(root);
-	cout << endl;
-	cout << "Preorder: ";
-	preorder(root);
-	cout<<endl;
-	cout << "Postorder: ";
-	postorder(root);
-
-	DFSRelease(root);         // Usuwamy drzewo AVL z pami?ci
 	getchar();
 
 	return 0;
