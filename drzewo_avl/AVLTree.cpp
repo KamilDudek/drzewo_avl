@@ -173,27 +173,23 @@ void insertAVL(AVL_Node * & root, int k)
 	AVL_Node * w, *p, *r, *x = root;
 	bool t;
 
-	w = new AVL_Node;        // tworzymy dynamicznie nowy w?ze?
+	w = new AVL_Node;        
 	w->left = w->right = w->parent = NULL;
 	w->key = k;
 	w->bf = 0;
 
-	//----------------------------------------
-	// FAZA 1 - wstawienie w?z?a do drzewa AVL
-	//----------------------------------------
-
 	p = root;              // rozpoczynamy od korzenia
 
-	if (!p) root = w;       // je?li drzewo jest puste, to w?ze? w umieszczamy w korzeniu
+	if (!p) root = w;       // jesli nie ma korzenia, to element umieszczamy w korzeniu
 	else
 	{                      // inaczej szukamy miejsce dla w
 		while (x)
 			if (k < p->key)     // porównujemy klucze
 			{
-				if (!p->left)     // je?li p nie posiada lewego syna, to
+				if (!p->left)     // jesli p nie posiada lewego syna
 				{
-					p->left = w;   // lewym synem p staje si? w?ze? w
-					break;         // wychodzimy z p?tli
+					p->left = w;   // lewym synem p staje sie element w
+					break;         
 				}
 				p = p->left;     // inaczej przechodzimy do lewego syna
 				
@@ -201,24 +197,22 @@ void insertAVL(AVL_Node * & root, int k)
 			
 			else
 			{
-				if (!p->right)    // je?li p nie posiada prawego syna, to
+				if (!p->right)    // jesli p nie posiada prawego syna, to
 				{
-					p->right = w;  // prawym synem staje si? w?ze? w
-					break;         // wychodzimy z p?tli
+					p->right = w;  // prawym synem staje sie element w
+					break;         
 				}
 				p = p->right;    // inaczej przechodzimy do prawego syna
 			}
 
 		w->parent = p;           // ojcem w jest p
 
-								 //---------------------------------
-								 // FAZA 2 - równowa?enie drzewa AVL
-								 //---------------------------------
+		//sprawdzamy wspolczynniki bf, zeby wiedziec ktora rotacje nalezy wykonac
 
-		if (p->bf) p->bf = 0; // UWAGA NR 1
+		if (p->bf) p->bf = 0; 
 		else
 		{
-			if (p->left == w)   // UWAGA NR 2
+			if (p->left == w)   
 				p->bf = 1;
 			else
 				p->bf = -1;
@@ -230,28 +224,28 @@ void insertAVL(AVL_Node * & root, int k)
 			{
 				if (r->bf)
 				{
-					t = true;     // ustalamy wynik p?tli
-					break;        // przerywamy p?tl?
+					t = true;     
+					break;        
 				};
-				// inaczej modyfikujemy r.bf
+				
 				if (r->left == p) r->bf = 1;
 				else             r->bf = -1;
 
-				p = r;          // przechodzimy w gór? na wy?szy poziom
+				p = r;          
 				r = r->parent;
 			}
 
-			if (t)             // je?li r.bf = +/- 1, to musimy
-			{                 // równowa?y? drzewo
+			if (t)             
+			{                 
 				if (r->bf == 1)
 				{
-					if (r->right == p) r->bf = 0;  // ga??zie si? równowa??
+					if (r->right == p) r->bf = 0; 
 					else if (p->bf == -1) LR(root, r);
 					else                 LL(root, r);
 				}
 				else
-				{              // r.bf = -1
-					if (r->left == p) r->bf = 0;  // ga??zie si? równowa??
+				{             
+					if (r->left == p) r->bf = 0; 
 					else if (p->bf == 1) RL(root, r);
 					else                RR(root, r);
 				}
