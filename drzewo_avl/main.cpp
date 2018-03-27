@@ -21,7 +21,7 @@ int main()
 		cout << "\n---------------------" << endl;
 		cout << "Drzewo AVL";
 		cout << "\n---------------------" << endl;
-		cout << "1.Tworzenie drzewa (dodawanie)" << endl;
+		cout << "1.Tworzenie drzewa losowego drzewa" << endl;
 		cout << "2.Wyswietlanie" << endl;
 		cout << "3.Metoda InOrder" << endl;
 		cout << "4.Metoda PreOrder" << endl;
@@ -29,7 +29,8 @@ int main()
 		cout << "6.Czyszczenie ekranu" << endl;
 		cout << "7.Wysokosc" << endl;
 		cout << "8. Kasowanie drzewa" << endl;
-		cout << "9. Wyjscie z programu" << endl;
+		cout << "9. Dodawanie argumentu" << endl;
+		cout << "10. Wyjscie z programu" << endl;
 		cout << "Wpisz odpowiednia cyfre: ";
 		cin >> choice;
 		
@@ -44,15 +45,15 @@ int main()
 		case 2:
 			if (root == NULL)
 			{
-				cout << "Tree is Empty" << endl;
+				cout <<endl<< "Tree is Empty" << endl;
 				continue;
 			}
 			system("cls");
-			printBT("", "", root,cr,cp,cl);      // Wy?wietlamy zawarto?? drzewa AVL
+			printBT("", "", root,cr,cp,cl);      
 			break;
 		case 3:
 			cout << "Inorder:" << endl;
-			inorder(root);
+			inorder(root);	
 			cout << endl;
 			break;
 		case 4:
@@ -69,19 +70,22 @@ int main()
 			system("cls");
 			break;
 		case 7:
-			cout << "Wysokosc: ";
+			cout << endl<<"Wysokosc: ";
 			height(root);
 			break;
 		case 8:
 			DFSRelease(root);
 			root = NULL;
-			cout << "Drzewo zostalo usuniete!" << endl;
+			cout <<endl<< "Drzewo zostalo usuniete!" << endl;
 			break;
 		case 9:
-			exit(1);
+			cout << endl<< "Wprowadz liczbe:";
+			Add(root);
 			break;
+		case 10:
+			exit(1);
 		default:
-			cout << "Bledna komenda!!" << endl;
+			cout << endl<<"Bledna komenda!!" << endl;
 		}
 	}
 	getchar();

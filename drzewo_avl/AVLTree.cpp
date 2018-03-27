@@ -196,7 +196,9 @@ void insertAVL(AVL_Node * & root, int k)
 					break;         // wychodzimy z p?tli
 				}
 				p = p->left;     // inaczej przechodzimy do lewego syna
+				
 			}
+			
 			else
 			{
 				if (!p->right)    // je?li p nie posiada prawego syna, to
@@ -296,86 +298,6 @@ AVL_Node * findAVL(AVL_Node * p, int k)
 	return p;
 }
 
-AVL_Node * removeAVL(AVL_Node * & root, AVL_Node * A)
-{
-	AVL_Node  *t, *y, *z;
-	bool nest;
-
-	if (A->left && A->right)
-	{
-		y = removeAVL(root, preorder(A));
-		nest = false;
-	}
-	else
-	{
-		if (A->left)
-		{
-			y = A->left; A->left = NULL;
-		}
-		else
-		{
-			y = A->right; A->right = NULL;
-		}
-		A->bf = 0;
-		nest = true;
-	}
-
-	if (y)
-	{
-		y->parent = A->parent;
-		y->left = A->left;  if (y->left)  y->left->parent = y;
-		y->right = A->right; if (y->right)  y->right->parent = y;
-		y->bf = A->bf;
-	}
-	if (A->parent)
-	{
-		if (A->parent->left == A) A->parent->left = y; else A->parent->right = y;
-	}
-	else root = y;
-
-	if (nest)
-	{
-		z = y;
-		y = A->parent;
-		while (y)
-		{
-			if (!y->bf)
-			{              // Przypadek nr 1
-				if (y->left == z)  y->bf = -1; else y->bf = 1;
-				break;
-			}
-			else
-			{
-				if (((y->bf == 1) && (y->left == z)) || ((y->bf == -1) && (y->right == z)))
-				{           // Przypadek nr 2
-					y->bf = 0;
-					z = y; y = y->parent;
-				}
-				else
-				{
-					if (y->left == z)  t = y->right; else t = y->left;
-					if (!t->bf)
-					{         // Przypadek 3A
-						if (y->bf == 1) LL(root, y); else RR(root, y);
-						break;
-					}
-					else if (y->bf == t->bf)
-					{         // Przypadek 3B
-						if (y->bf == 1) LL(root, y); else RR(root, y);
-						z = t; y = t->parent;
-					}
-					else
-					{         // Przypadek 3C
-						if (y->bf == 1) LR(root, y); else RL(root, y);
-						z = y->parent; y = z->parent;
-					}
-				}
-			}
-		}
-	}
-	return A;
-}
-
 void createTree(AVL_Node * &root, int capacity)
 {
 	int var = 0;
@@ -385,4 +307,11 @@ void createTree(AVL_Node * &root, int capacity)
 		cout << " | " << var << " | " << endl;
 		insertAVL(root, var);
 	}
+}
+
+void Add(AVL_Node * &root)
+{
+	int var = 0;
+		cin >> var;
+	insertAVL(root, var);	
 }
