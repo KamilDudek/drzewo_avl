@@ -32,15 +32,16 @@ int main()
 		cout << "9. Dodawanie argumentu" << endl;
 		cout << "10. Wyjscie z programu" << endl;
 		cout << "Wpisz odpowiednia cyfre: ";
-		//cin >> choice;
+
 		string tmp;
-		getline(cin,tmp);
-		choice = atoi(tmp.c_str());
+		getline(cin,tmp);		//pobieranie stringa
+		choice = atoi(tmp.c_str()); //zmiana stringa na int, by menu bylo odporne na wpisanie litery
 		switch (choice)
 		{
 		case 1:
 			cout << "Wprowadz ilosc: ";
-			cin >> b;
+			getline(cin, tmp);
+			b = atoi(tmp.c_str());		
 			createTree(root,b);
 			break;
 		case 2:
@@ -54,16 +55,19 @@ int main()
 			break;
 		case 3:
 			cout << "Inorder:" << endl;
+			Empty(root);
 			inorder(root);	
 			cout << endl;
 			break;
 		case 4:
 			cout << "Preorder:" << endl;
+			Empty(root);
 			preorder(root);
 			cout << endl;
 			break;
 		case 5:
 			cout << "Postorder:" << endl;
+			Empty(root);
 			postorder(root);
 			cout << endl;
 			break;
@@ -73,6 +77,7 @@ int main()
 		case 7:
 			cout << endl<<"Wysokosc: ";
 			height(root);
+			Empty(root);
 			break;
 		case 8:
 			DFSRelease(root);
@@ -87,9 +92,6 @@ int main()
 			exit(1);
 		default:
 			cout << endl<<"Bledna komenda!!" << endl;
-
-			/*getchar();
-			exit(1);*/
 		}
 	}
 	getchar();
