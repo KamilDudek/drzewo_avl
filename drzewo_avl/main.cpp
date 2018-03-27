@@ -15,7 +15,6 @@ int main()
 	cl[0] = 192; cl[1] = 196;
 	cp[0] = 179;
 
-	cout << endl << endl;
 	int choice;
 	while (1)
 	{
@@ -31,12 +30,14 @@ int main()
 		cout << "7.Wysokosc" << endl;
 		cout << "8. Kasowanie drzewa" << endl;
 		cout << "9. Wyjscie z programu" << endl;
-		cout << "Enter your Choice: ";
+		cout << "Wpisz odpowiednia cyfre: ";
 		cin >> choice;
+		
+
 		switch (choice)
 		{
 		case 1:
-			cout << "Enter value to be inserted: ";
+			cout << "Wprowadz ilosc: ";
 			cin >> b;
 			createTree(root,b);
 			break;

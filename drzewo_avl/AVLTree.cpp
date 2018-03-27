@@ -5,7 +5,6 @@ using namespace std;
 void printBT(string sp, string sn, AVL_Node * v,string cr, string cp, string cl)
 {
 	string s;
-
 	if (v)
 	{
 		s = sp;
@@ -115,21 +114,6 @@ void height(AVL_Node *&root, int *h, int level)
 	}
 }
 
-void Bf(AVL_Node *temp)
-{
-	int iL = 0;		//lewa galaz
-	int iR = 0;		// prawa galaz
-
-	AVL_Node *A = temp, *y = A->left, *z = A->right;
-
-	if (y != NULL)
-		height(y, &iL, 1);
-	if (z != NULL)
-		height(z, &iR, 1);
-
-	A->bf = iL - iR; //obliczanie bf
-}
-
 void LR(AVL_Node *&root, AVL_Node  *A)
 {
 	AVL_Node * B = A->left, *C = B->right, *p = A->parent;
@@ -186,7 +170,7 @@ void RL(AVL_Node *& root, AVL_Node * A)
 
 void insertAVL(AVL_Node * & root, int k)
 {
-	AVL_Node * w, *p, *r;
+	AVL_Node * w, *p, *r, *x = root;
 	bool t;
 
 	w = new AVL_Node;        // tworzymy dynamicznie nowy w?ze?
@@ -203,7 +187,7 @@ void insertAVL(AVL_Node * & root, int k)
 	if (!p) root = w;       // je?li drzewo jest puste, to w?ze? w umieszczamy w korzeniu
 	else
 	{                      // inaczej szukamy miejsce dla w
-		while (true)
+		while (x)
 			if (k < p->key)     // porównujemy klucze
 			{
 				if (!p->left)     // je?li p nie posiada lewego syna, to
