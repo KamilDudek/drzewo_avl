@@ -18,7 +18,7 @@ int main()
 	int choice;
 	while (1)
 	{
-		cout << "\n---------------------" << endl;
+		cout << "---------------------" << endl;
 		cout << "Drzewo AVL";
 		cout << "\n---------------------" << endl;
 		cout << "1.Tworzenie drzewa losowego drzewa" << endl;
