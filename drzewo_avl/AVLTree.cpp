@@ -22,30 +22,30 @@ void printBT(string sp, string sn, AVL_Node * v,string cr, string cp, string cl)
 
 void DFSRelease(AVL_Node * v)
 {
-	if (v)
+	if (v!=NULL)
 	{
 		DFSRelease(v->left);   // usuwamy lewe poddrzewo
+		v->left = NULL;
 		DFSRelease(v->right);  // usuwamy prawe poddrzewo
+		v->right = NULL;
 		delete v;              // usuwamy sam w?ze?
 	}
 }
 
-void RR(AVL_Node *&root, AVL_Node * A)
+void RR (AVL_Node * & root, AVL_Node * A)
 {
-	AVL_Node * B, *p; //p - przodek
-	B = A->right;
-	p = A->parent;
-	if (A != NULL && A->right != NULL)
-	{
-		A->parent = B;
-		B->parent = p;
-		A->right = B->left;
-		B->left = A;
-	}
+	AVL_Node * B = A->right, *p = A->parent;
 
-	if (p != NULL) {
-		if (p->left == A) p->left = B;
-		else p->right = B;
+	A->right = B->left;
+	if (A->right) A->right->parent = A;
+
+	B->left = A;
+	B->parent = p;
+	A->parent = B;
+
+	if (p)
+	{
+		if (p->left == A) p->left = B; else p->right = B;
 	}
 	else root = B;
 
@@ -55,28 +55,22 @@ void RR(AVL_Node *&root, AVL_Node * A)
 		A->bf = -1; B->bf = 1;
 	}
 }
-
-void LL(AVL_Node *&root, AVL_Node * A)
+void LL(AVL_Node * & root, AVL_Node * A)
 {
-	AVL_Node *B, *p; //p - przodek
-	B = A->left;
-	p = A->parent;
+	AVL_Node * B = A->left, *p = A->parent;
 
-	if (A != NULL && A->left != NULL)
+	A->left = B->right;
+	if (A->left) A->left->parent = A;
+
+	B->right = A;
+	B->parent = p;
+	A->parent= B;
+
+	if (p)
 	{
-		A->parent = B;
-		B->parent = p;
-		A->left = B->right;
-		B->right = A;
+		if (p->left == A) p->left = B; else p->right = B;
 	}
-	if (p != NULL)
-	{
-		if (p->left == A) //sprawdzamy czy A jest lewym badz prawym dzieckiem
-			p->left = B;
-		else p->right = B;
-	}
-	else
-		root = B;
+	else root = B;
 
 	if (B->bf == 1) A->bf = B->bf = 0;
 	else
@@ -84,6 +78,7 @@ void LL(AVL_Node *&root, AVL_Node * A)
 		A->bf = 1; B->bf = -1;
 	}
 }
+
 
 void height(AVL_Node *&root)
 {
@@ -184,7 +179,7 @@ void insertAVL(AVL_Node * & root, int k)
 	else
 	{                      // inaczej szukamy miejsce dla w
 		while (x)
-			if (k < p->key)     // porównujemy klucze
+			if (k <= p->key)     // porównujemy klucze
 			{
 				if (!p->left)     // jesli p nie posiada lewego syna
 				{
@@ -309,3 +304,83 @@ void Add(AVL_Node * &root)
 		cin >> var;
 	insertAVL(root, var);	
 }
+
+//AVL_Node * removeAVL(AVL_Node * & root, AVL_Node * A)
+// {
+//	AVL_Node * t, *y, *z;
+//	bool nest;
+//	
+//		if (A->left && A->right)
+//		 {
+//		y = removeAVL(root, preorder(A));
+//		nest = false;
+//		}
+//	else
+//		 {
+//		if (A->left)
+//			 {
+//			y = A->left; A->left = NULL;
+//			}
+//		else
+//			{
+//			y = A->right; A->right = NULL;
+//			}
+//		A->bf = 0;
+//		nest = true;
+//		}
+//	
+//		if (y)
+//		{
+//		y->parent = A->parent;
+//		y->left = A->left;  if (y->left)  y->left->parent = y;
+//		y->right = A->right; if (y->right)  y->right->parent = y;
+//		y->bf = A->bf;
+//		}
+//	if (A->parent)
+//	 {
+//		if (A->parent->left == A) A->parent->left = y; else A->parent->right = y;
+//		}
+//	else root = y;
+//	
+//		if (nest)
+//		{
+//		z = y;
+//		y = A->parent;
+//		while (y)
+//		{
+//			if (!y->bf)
+//			{              // Przypadek nr 1
+//				if (y->left == z)  y->bf = -1; else y->bf = 1;
+//				break;
+//			}
+//			else
+//			{
+//				if (((y->bf == 1) && (y->left == z)) || ((y->bf == -1) && (y->right == z)))
+//				{           // Przypadek nr 2
+//					y->bf = 0;
+//					z = y; y = y->parent;
+//				}
+//				else
+//				{
+//					if (y->left == z)  t = y->right; else t = y->left;
+//					if (!t->bf)
+//					{         // Przypadek 3A
+//						if (y->bf == 1) LL(root, y); else RR(root, y);
+//						break;
+//					}
+//					else if (y->bf == t->bf)
+//					{         // Przypadek 3B
+//						if (y->bf == 1) LL(root, y); else RR(root, y);
+//						z = t; y = t->parent;
+//					}
+//					else
+//					{         // Przypadek 3C
+//						if (y->bf == 1) LR(root, y); else RL(root, y);
+//						z = y->parent; y = z->parent;
+//					}
+//				}
+//			}
+//		}
+//		}
+//	return A;
+//	}

@@ -8,7 +8,7 @@ using namespace std;
 
 void printBT(string, string, AVL_Node *, string cr, string cp, string cl);
 void DFSRelease(AVL_Node *);
-AVL_Node * findAVL(AVL_Node *, int);
+AVL_Node * removeAVL(AVL_Node * &, AVL_Node *);
 AVL_Node *postorder(AVL_Node *);
 AVL_Node *preorder(AVL_Node *);
 void inorder(AVL_Node *);
