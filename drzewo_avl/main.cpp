@@ -32,9 +32,10 @@ int main()
 		cout << "9. Dodawanie argumentu" << endl;
 		cout << "10. Wyjscie z programu" << endl;
 		cout << "Wpisz odpowiednia cyfre: ";
-		cin >> choice;
-		
-
+		//cin >> choice;
+		string tmp;
+		getline(cin,tmp);
+		choice = atoi(tmp.c_str());
 		switch (choice)
 		{
 		case 1:
@@ -86,6 +87,9 @@ int main()
 			exit(1);
 		default:
 			cout << endl<<"Bledna komenda!!" << endl;
+
+			/*getchar();
+			exit(1);*/
 		}
 	}
 	getchar();
